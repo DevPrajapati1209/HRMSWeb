@@ -12,6 +12,7 @@ import { AssetsmasterComponent } from './component/assetsmaster/assetsmaster.com
 import { ProjectmasterComponent } from './component/projectmaster/projectmaster.component';
 import { LeavetypeComponent } from './component/leavetype/leavetype.component';
 import { IndexComponent } from './component/index/index.component';
+import { ContactComponent } from './component/pages/contact/contact.component';
 
 
 export const routes: Routes = [
