@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ColDef, ICellRendererParams } from 'ag-grid-community';
 import { ActionComponent } from '../action/action.component';
 import { LeaveComponent } from '../../modal/leave/leave.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-leavetype',
@@ -17,19 +18,19 @@ import { LeaveComponent } from '../../modal/leave/leave.component';
 export class LeavetypeComponent {
   services = inject(LeavetypeService)
   dialog = inject(MatDialog)
-
+  toaster = inject(ToastrService)
 
   public columnDefs: ColDef[] = [
-    { field: "id", floatingFilter: true, filter: true, flex: 1 },
-    { field: "leaveName", floatingFilter: true, filter: true, flex: 1 },
-    { field: "leaveType", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdBy", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdDate", floatingFilter: true, filter: true, flex: 1 },
-    { field: "updatedBy", floatingFilter: true, filter: true, flex: 1 },
-    { field: "updatedDate", floatingFilter: true, filter: true, flex: 1 },
-    { field: "description", floatingFilter: true, filter: true, flex: 1 },
-    { field: "isActive", flex: 1, cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="font-size: x-large; color: red; "></i>` },
-    { field: "action", flex: 1, cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
+    { field: "id", floatingFilter: true, filter: true},
+    { field: "leaveName", floatingFilter: true, filter: true},
+    { field: "leaveType", floatingFilter: true, filter: true},
+    { field: "createdBy", floatingFilter: true, filter: true},
+    { field: "createdDate", floatingFilter: true, filter: true},
+    { field: "updatedBy", floatingFilter: true, filter: true},
+    { field: "updatedDate", floatingFilter: true, filter: true},
+    { field: "description", floatingFilter: true, filter: true},
+    { field: "isActive", cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="font-size: x-large; color: red; "></i>` },
+    { field: "action", cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
   ];
 
   ngOnInit() {
@@ -72,6 +73,7 @@ export class LeavetypeComponent {
       this.services.DeleteData(DesignationId).subscribe({
         next: (res) => {
           this.getAllData();
+          this.toaster.success('successfully delete data', 'delete')
         }
       })
     }

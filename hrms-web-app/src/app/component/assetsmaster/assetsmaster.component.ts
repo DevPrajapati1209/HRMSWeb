@@ -8,11 +8,12 @@ import { ActionComponent } from '../action/action.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AssetsmastersComponent } from '../../modal/assetsmasters/assetsmasters.component';
 import { MatButtonModule } from '@angular/material/button';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-assetsmaster',
   standalone: true,
-  imports: [AgGridAngular, AgGridModule, CommonModule,MatButtonModule],
+  imports: [AgGridAngular, AgGridModule, CommonModule, MatButtonModule],
   templateUrl: './assetsmaster.component.html',
   styleUrl: './assetsmaster.component.scss'
 })
@@ -20,17 +21,18 @@ export class AssetsmasterComponent {
   services = inject(AssetsmasterService)
   router = inject(Router)
   dialog = inject(MatDialog)
+  toaster = inject(ToastrService)
 
   public columnDefs: ColDef[] = [
-    { field: "id", floatingFilter: true, filter: true, flex: 1 },
-    { field: "assetsMasterName", floatingFilter: true, filter: true, flex: 1 },
-    { field: "serialNumber", floatingFilter: true, filter: true, flex: 1 },
-    { field: "dateOfPurchase", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdBy", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdDate", floatingFilter: true, filter: true, flex: 1 },
-    { field: "description", floatingFilter: true, filter: true, flex: 1 },
-    { field: "isActive", flex: 1, cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="color: red; font-size: x-large;"></i>` },
-    { field: "action", flex: 1, cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
+    { field: "id", floatingFilter: true, filter: true,},
+    { field: "assetsMasterName", floatingFilter: true, filter: true,},
+    { field: "serialNumber", floatingFilter: true, filter: true,},
+    { field: "dateOfPurchase", floatingFilter: true, filter: true,},
+    { field: "createdBy", floatingFilter: true, filter: true,},
+    { field: "createdDate", floatingFilter: true, filter: true,},
+    { field: "description", floatingFilter: true, filter: true,},
+    { field: "isActive", cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="color: red; font-size: x-large;"></i>` },
+    { field: "action", cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
   ]
 
   rowData: any;
@@ -51,18 +53,19 @@ export class AssetsmasterComponent {
     resizable: true
   }
 
-  Edit(data:any) {
+  Edit(data: any) {
     const dialogRef = this.dialog.open(AssetsmastersComponent, {
       data,
     })
     dialogRef.afterClosed().subscribe({
       next: (val) => {
         this.getData();
+
       }
     })
   }
 
-  Delete(AssetsMasterId:any) {
+  Delete(AssetsMasterId: any) {
     if (AssetsMasterId != null) {
       this.services.DeleteData(AssetsMasterId).subscribe(() => {
         AssetsMasterId.isDeleted = true;
@@ -72,6 +75,7 @@ export class AssetsmasterComponent {
       this.services.DeleteData(AssetsMasterId).subscribe({
         next: (res) => {
           this.getData();
+          this.toaster.success('successfully delete data', 'delete')
         }
       })
     }

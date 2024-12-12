@@ -10,6 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { HolidaysComponent } from '../../modal/holidays/holidays.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-holiday',
@@ -24,29 +25,30 @@ export class HolidayComponent {
   router = inject(Router)
   route = inject(ActivatedRoute)
   dialog = inject(MatDialog)
+  toaster = inject(ToastrService)
 
   public columnDefs: ColDef[] = [
-    { field: "id", floatingFilter: true, filter: true, flex: 1 },
-    { field: "holidayName", floatingFilter: true, filter: true, flex: 1 },
-    { field: "description", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdDate", floatingFilter: true, filter: true, flex: 1 },
-    { field: "createdBy", floatingFilter: true, filter: true, flex: 1 },
-    { field: "updatedBy", floatingFilter: true, filter: true, flex: 1 },
-    { field: "updatedDate", floatingFilter: true, filter: true, flex: 1 },
+    { field: "id", floatingFilter: true, filter: true},
+    { field: "holidayName", floatingFilter: true, filter: true},
+    { field: "description", floatingFilter: true, filter: true},
+    { field: "createdDate", floatingFilter: true, filter: true},
+    { field: "createdBy", floatingFilter: true, filter: true},
+    { field: "updatedBy", floatingFilter: true, filter: true},
+    { field: "updatedDate", floatingFilter: true, filter: true},
 
-    { field: "isActive", flex: 1, cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="font-size: x-large; color: red; "></i>` },
-    // { field: "isActive", flex: 1, cellRenderer: TogglebuttonComponent },
+    { field: "isActive", cellRenderer: (params: ICellRendererParams) => params.value ? `<i class="fa-solid fa-toggle-on" style="color: green; font-size: x-large;"></i>` : `'<i class="fa-solid fa-toggle-off" style="font-size: x-large; color: red; "></i>` },
+    // { field: "isActive", cellRenderer: TogglebuttonComponent },
 
-    { field: "action", flex: 1, cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
+    { field: "action", cellRenderer: ActionComponent, cellRendererParams: { Edit: this.Edit.bind(this), Delete: this.Delete.bind(this) } }
   ]
 
   constructor() { this.columnDefs }
 
   ngOnInit() {
     this.getHoliday();
-   }
+  }
 
-   getHoliday(){
+  getHoliday() {
     this.services.getHoliday().subscribe((response: any) => {
       this.rowData = response.data;
     })
@@ -79,11 +81,12 @@ export class HolidayComponent {
       this.services.DeleteHoliday(holidayId).subscribe(() => {
         holidayId.isDeleted = true;
         holidayId.isActive = false;
- 
+
       })
       this.services.DeleteHoliday(holidayId).subscribe({
         next: (res) => {
           this.getHoliday();
+          this.toaster.success('successfully delete data', 'delete')
         }
       })
     }
@@ -98,7 +101,7 @@ export class HolidayComponent {
         }
       }
     })
-}
+  }
 
-  
+
 }
